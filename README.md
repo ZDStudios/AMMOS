@@ -12,10 +12,10 @@ Double-click `INSTALL.bat`. It will:
 - Run `npm install`
 - Create the Claude Desktop config snippet
 - Open your config folder
+- All saved here C:\Users\%USERNAME%\AppData\Local\AMMOS
 
 > **Need Node.js?** → https://nodejs.org (LTS version)
 > **Need Java 17?** → https://adoptium.net
-> **C:\Users\%USERNAME%\AppData\Local\AMMOS
 
 ### Step 2 — Add to Claude Desktop config
 Paste this into `%APPDATA%\Claude\claude_desktop_config.json`:
