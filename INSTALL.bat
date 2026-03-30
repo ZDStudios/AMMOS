@@ -2,7 +2,7 @@
 setlocal enabledelayedexpansion
 
 :: Define variables
-set "TARGET_DIR=C:\Users\%USERNAME%\AppData\Local\AMMOS"
+set "TARGET_DIR=C:\Users\Zayn\AppData\Local\AMMOS"
 set "REPO_URL=https://github.com/ZDStudios/AMMOS"
 
 title AMMOS Setup Assistant
@@ -11,13 +11,13 @@ echo             AMMOS Environment Setup
 echo ===================================================
 echo.
 
-:: 1. Create directory if it doesn't exist
-if not exist "%TARGET_DIR%" (
-    echo [+] Creating directory: %TARGET_DIR%
-    mkdir "%TARGET_DIR%"
-) else (
-    echo [*] Directory already exists: %TARGET_DIR%
+:: 1. Handle the directory
+if exist "%TARGET_DIR%" (
+    echo [*] Cleaning up existing folder to ensure a fresh download...
+    rmdir /s /q "%TARGET_DIR%"
 )
+echo [+] Creating clean directory: %TARGET_DIR%
+mkdir "%TARGET_DIR%"
 
 :: 2. Check for Java
 echo.
@@ -47,38 +47,52 @@ if %errorlevel% neq 0 (
     echo [+] Node.js is installed.
 )
 
-:: 4. Fetch GitHub Content
+:: 4. Check and Auto-Install Git
+echo.
+echo [*] Checking for Git...
+where git >nul 2>&1
+if %errorlevel% neq 0 (
+    echo [!] Git is not found. Attempting auto-install via winget...
+    
+    :: Try to install using Windows Package Manager
+    winget install --id Git.Git -e --source winget --accept-package-agreements --accept-source-agreements
+    
+    if !errorlevel! neq 0 (
+        echo [X] Auto-install failed. Please install Git manually from https://git-scm.com/
+        start "" "https://git-scm.com/"
+        goto :pause_exit
+    )
+    
+    echo [+] Git installed successfully! 
+    echo [!] Windows needs to refresh to recognize the new command.
+    echo [!] Please CLOSE this window and run the script again to finish setup!
+    goto :pause_exit
+) else (
+    echo [+] Git is installed.
+)
+
+:: 5. Fetch GitHub Content
 echo.
 echo [*] Fetching GitHub content...
+echo [+] Cloning repository via Git...
+git clone %REPO_URL% "%TARGET_DIR%"
+
+:: 6. Run npm install
+echo.
+echo [*] Moving to folder and installing dependencies...
 cd /d "%TARGET_DIR%"
 
-:: Check if Git is installed to clone
-where git >nul 2>&1
-if %errorlevel% equ 0 (
-    :: Check if folder is already a git repo or has files
-    dir /A /B | findstr . >nul
-    if %errorlevel% neq 0 (
-        echo [+] Cloning repository via Git...
-        git clone %REPO_URL% .
-    ) else (
-        echo [*] Folder is not empty. Attempting to pull latest updates...
-        git pull >nul 2>&1
-    )
-) else (
-    echo [!] Git is not installed. Cannot clone directly.
-    echo [!] Opening the GitHub page. Please download the ZIP and extract it to:
-    echo     %TARGET_DIR%
-    start "" "%REPO_URL%"
+:: Double check that package.json actually exists now
+if not exist "package.json" (
+    echo [X] Error: package.json was not found in %TARGET_DIR%.
+    echo [!] The GitHub download may have failed.
     goto :pause_exit
 )
 
-:: 5. Run npm install
-echo.
-echo [*] Installing dependencies (npm install)...
 call npm install
 if %errorlevel% neq 0 (
-    echo [X] npm install failed. Please check the errors above.
-    goto :pause_exit
+    echo [!] npm install had a warning, trying to force a clean install...
+    call npm install --no-shrinkwrap
 )
 
 echo.
