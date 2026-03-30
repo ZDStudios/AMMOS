@@ -24,7 +24,7 @@ Paste this into `%APPDATA%\Claude\claude_desktop_config.json`:
   "mcpServers": {
     "minecraft-builder": {
       "command": "node",
-      "args": ["C:\\Users\\%USERNAME%\\Desktop\\MCP-MC-MOD-MAKER\\server.js"]
+      "args": ["C:\\Users\\%USERNAME%\\AppData\\Local\\AMMOS\server.js"]
     }
   }
 }
