@@ -1,0 +1,14 @@
+{
+  "name": "minecraft-mod-builder-mcp",
+  "version": "1.0.0",
+  "description": "Local MCP server for building Minecraft Forge mods with Claude",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.10.0",
+    "zod": "^3.23.0"
+  }
+}
