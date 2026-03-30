@@ -1,6 +1,6 @@
 # 🧱 Minecraft Mod Builder — MCP Server
 
-Gives Claude Desktop (and other MCP Capable AI Agents) the ability to write, compile, and deliver Minecraft Forge mod JARs — all from chat.
+Gives Claude Desktop (and other MCP Capable AI Agents) the ability to write, compile, and deliver Minecraft mod JARs — all from chat.
 
 ---
 
