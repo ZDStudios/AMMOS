@@ -2,8 +2,9 @@
 setlocal enabledelayedexpansion
 
 :: Define variables
-set "TARGET_DIR=C:\Users\Zayn\AppData\Local\AMMOS"
+set "TARGET_DIR=C:\Users\%USERNAME%\AppData\Local\AMMOS"
 set "REPO_URL=https://github.com/ZDStudios/AMMOS"
+set "CLAUDE_CONFIG=%APPDATA%\Claude\claude_desktop_config.json"
 
 title AMMOS Setup Assistant
 echo ===================================================
@@ -94,6 +95,29 @@ if %errorlevel% neq 0 (
     echo [!] npm install had a warning, trying to force a clean install...
     call npm install --no-shrinkwrap
 )
+
+:: 7. Safe JSON Injection for Claude Desktop
+echo.
+echo [*] Updating Claude Desktop configuration...
+
+:: Write the clean, complete JSON directly to the file
+(
+echo {
+echo   "preferences": {
+echo     "coworkWebSearchEnabled": true,
+echo     "coworkScheduledTasksEnabled": false,
+echo     "ccdScheduledTasksEnabled": false
+echo   },
+echo   "mcpServers": {
+echo     "minecraft-builder": {
+echo       "command": "node",
+echo       "args": ["C:\\Users\\%USERNAME%\\AppData\\Local\\AMMOS\\server.js"]
+echo     }
+echo   }
+echo }
+) > "%CLAUDE_CONFIG%"
+
+echo [+] Successfully updated Claude config!
 
 echo.
 echo ===================================================
